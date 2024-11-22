@@ -1,4 +1,4 @@
-LUNEA_VERSION = "1.0.0"
+LUNEA_VERSION = "1.0.1"
 
 local colors = {
     reset = "\27[0m",
@@ -43,8 +43,8 @@ local function is_dependency_installed(dep)
     local null_device = package.config:sub(1, 1) == "\\" and "NUL" or "/dev/null"
     local cmd = "luarocks show --local " .. dep .. " > " .. null_device .. " 2>&1"
 
-    local success = os.execute(cmd)
-    return success == 0
+    local exit_code = os.execute(cmd)
+    return exit_code == 0
 end
 
 tasks["install_dependencies"] = function()
@@ -58,8 +58,8 @@ tasks["install_dependencies"] = function()
         local is_installed = is_dependency_installed(dep)
         if not is_installed then
             print("- Installing dependency: " .. dep)
-            local success = os.execute("luarocks install --local " .. dep)
-            if not success == 0 then
+            local exit_code = os.execute("luarocks install --local " .. dep)
+            if exit_code ~= 0 then
                 error("Failed to install dependency: " .. dep)
             else
                 print("Dependency installed: " .. dep)
@@ -129,14 +129,14 @@ tasks["project_info"] = function()
         table.insert(scripts, "\n  - " .. id .. ": " .. tostring(path))
     end
 
-    print("- Scripts:" .. table.concat(scripts, ""))
+    print("- Scripts:" .. (#project.scripts > 0 and table.concat(scripts, "") or "none"))
 
     local tasks = {}
     for task, func in pairs(project.tasks) do
         table.insert(tasks, task)
     end
 
-    print("- Tasks: " .. table.concat(tasks, ", "))
+    print("- Tasks: " .. (#project.tasks > 0 and table.concat(tasks, "") or "none"))
 end
 
 tasks["tasks"] = function()
