@@ -1,4 +1,4 @@
-LUNEA_VERSION = "1.0.0"
+LUNEA_VERSION = "1.0.1"
 
 local colors = {
     reset = "\27[0m",
@@ -55,7 +55,7 @@ function runTask(task_name, ...)
 end
 
 local function is_dependency_installed(dep)
-    local exit_code = os.execute("luarocks show " .. dep .. " --tree=packages >" .. is_windows and "NUL" or "/dev/null" .. " 2>&1")
+    local exit_code = os.execute("luarocks show " .. dep .. " --tree=packages >" .. (is_windows and "NUL" or "/dev/null") .. " 2>&1")
     return exit_code == 0
 end
 
